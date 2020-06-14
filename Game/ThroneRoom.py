@@ -9,18 +9,16 @@ from os import system, name
 import sys
 import winsound
 
-## Variables ##
-# Resources
+#Variables
 wood = 100
 stone = 100
 food = 100
 money = 0
 
-# Buildings
 sawmill = 1
 quarry = 1
 crop = 1
-soldier = 1
+soldier = 0
 
 barrack = 0
 expansion = 0
@@ -29,12 +27,10 @@ woodprod = 1
 stoneprod = 1
 foodprod = 1
 
-# War
 glory = 0
 battle = 0
 victory = 0
 rank = "Knight"
-title = "0"
 lordname = 0
 opponent = 0
 requiredsoldier = 0
@@ -165,7 +161,7 @@ Ex: Wolves ---> <50 Glory Points (5 Soldier Required)")
 1) Yes\n\
 2) No\n\
 ---> ")
-    if gotomainmenu == "yes":
+    if gotomainmenu == "1":
         clear()
         throneroom()
     else:
@@ -183,7 +179,7 @@ def credit():
 1) Yes\n\
 2) No\n\
 ---> ")
-    if gotomainmenu == "yes":
+    if gotomainmenu == "1":
         clear()
         throneroom()
     else:
@@ -197,10 +193,10 @@ def intro():
 ---> ")
     clear()
     lordname = lord
-    variable_name = "\nAfter a long decade of fighting, Ser " + str(lord) + " defeated\n\
+    variable_name = f"\nAfter a long decade of fighting, Ser {lord} defeated\n\
 the enemy, The insane King of the Ocean...     \n\
-Ser " + str(lord) + " is now the rightful ruler of the realm for the years to come...    \n\
-Long live Ser " + str(lord) + "!\n"
+Ser {lord} is now the rightful ruler of the realm for the years to come...    \n\
+Long live Ser {lord}!\n"
 
     time.sleep(1)
     for char in variable_name:
@@ -237,29 +233,15 @@ Q) Quit\n\
         menu()
 
 def market():
-    global wood
-    global stone
-    global food
-    global money
-    global sawmill
-    global quarry
-    global crop
-    global soldier
-    global barrack
-    global expansion
-    global buildlimit
-    global woodprod
-    global stoneprod
-    global foodprod
-
+    global wood, stone, food, money, sawmill, quarry, crop, soldier, barrack, expansion, buildlimit, woodprod, stoneprod, foodprod
     marketing = input("\n     __  __             _         _    \n\
 ### |  \/  | __ _  _ _ | |__ ___ | |_  ###\n\
 ### | |\/| |/ _` || '_|| / // -_)|  _| ###\n\
 ### |_|  |_|\__,_||_|  |_\_\|___| \__| ###\n\
 > What would you like to do?\n\
-|1) Sawmill |4) Soldier   |7) Sell    | \n\
-|2) Quarry  |5) Barrack   |8) Upgrade |\n\
-|3) Crop    |6) Expansion |m) Menu    |\n\
+|1) Sawmill|4) Soldier   |7) Sell    | \n\
+|2) Quarry |5) Barrack   |8) Upgrade |\n\
+|3) Crop   |6) Expansion |m) Menu    |\n\
 ---> ")
     if marketing == "1":
         clear()
@@ -522,11 +504,11 @@ m) Menu\n\
 m) Menu\n\
 ---> ")
         if upgrading == "1":
-            upgrades = input("> Do you want to upgrade your Sawmills?(-1000 Wood)\n\
+            upgrades = input("> Do you want to upgrade your Sawmill(s)?(-1000 Wood)\n\
 1) Yes\n\
 2) No\n\
 ---> ")
-            if upgrades == "1" and wood >= 1000:
+            if upgrades == "1" and wood >= 1000 and woodprod <= 1000000:
                 wood -= 1000
                 woodprod = woodprod * 2
                 clear()
@@ -536,16 +518,21 @@ m) Menu\n\
                 time.sleep(2)
                 clear()
                 stats()
+            elif woodprod > 1000000:
+                print("Now is the time to sell")
+                time.sleep(2)
+                clear()
+                stats()
             else:
                 clear()
                 stats()
 
         elif upgrading == "2":
-            upgradeq = input("> Do you want to upgrade your Quarries?(-1000 Stone)\n\
+            upgradeq = input("> Do you want to upgrade your Quarry?(-1000 Stone)\n\
 1) Yes\n\
 2) No\n\
 ---> ")
-            if upgradeq == "1" and stone >= 1000:
+            if upgradeq == "1" and stone >= 1000 and stoneprod <= 1000000:
                 stone -= 1000
                 stoneprod = stoneprod * 2
                 clear()
@@ -555,22 +542,33 @@ m) Menu\n\
                 time.sleep(2)
                 clear()
                 stats()
+            elif stoneprod > 1000000:
+                print("Now is the time to sell")
+                time.sleep(2)
+                clear()
+                stats()
             else:
                 clear()
                 stats()
 
         elif upgrading == "3":
-            upgradec = input("> Do you want to upgrade your Crops?(-1000 Wood/Stone)\n\
+            upgradec = input("> Do you want to upgrade your Crop(s)?(-1000 Wood/Stone)\n\
 1) Yes\n\
 2) No\n\
 ---> ")
-            if upgradec == "1" and wood >= 1000 and stone >= 1000:
+            if upgradec == "1" and wood >= 1000 and stone >= 1000 and foodprod <= 1000000:
                 wood -= 1000
                 stone -= 1000
                 foodprod = foodprod * 2
                 clear()
+                stats()
             elif wood < 1000 or stone < 1000:
                 print("You are short on Wood/Stone!")
+                time.sleep(2)
+                clear()
+                stats()
+            elif foodprod > 1000000:
+                print("Now is the time to sell")
                 time.sleep(2)
                 clear()
                 stats()
@@ -586,56 +584,43 @@ m) Menu\n\
         menu()
 
 def war():
-    global glory
-    global battle
-    global victory
-    global soldier
-    global rank
-    global title
-    global opponent
-    global requiredsoldier
+    global glory, battle, victory, soldier, rank, opponent, requiredsoldier
     if glory < 50:
         rank = "Knight"
-        title = "Ser"
         opponent = "Wolves"
         requiredsoldier = 5
     elif glory >= 50 and glory < 500:
         rank = "Baron"
-        title = "Baron"
         opponent = "Peasants"
         requiredsoldier = 100
     elif glory >= 500 and glory < 2000:
         rank = "Duke"
-        title = "Duke"
         opponent = "Rebels"
         requiredsoldier = 1000
     elif glory >= 2000 and glory < 2500:
         rank = "Prince"
-        title = "Prince"
         opponent = "Lord"
         requiredsoldier = 5000
     elif glory >= 2500 and glory < 10000:
         rank = "King"
-        title = "King"
         opponent = "Lord with Dragon"
         requiredsoldier = 10000
     elif glory >= 10000:
         rank = "Emperor"
-        title = "Emperor"
         opponent = "Giant King"
         requiredsoldier = 100000
     print("\n    __      __             \n\
 ### \ \    / /__ _  _ _  ###\n\
 ###  \ \/\/ // _` || '_| ###\n\
 ###   \_/\_/ \__,_||_|   ###")
-    print("> YOU ARE THE " + rank + " " + str(lordname) + "!<")
-    print("\nYou have " + str(glory) + " Glory points")
-    print("You have launched " + str(battle) + " Battle(s)")
-    print("You have won " + str(victory) + " Victory")
+    print(f"> YOU ARE THE {rank} {lordname}!<")
+    print(f"\nYou have {glory} Glory points")
+    print(f"You have launched {battle} Battle(s)")
+    print(f"You have won {victory} Victory")
     print("")
-    war = input("> Do you want to start a War?\n\
-You will fight the " + str(opponent) + ". \n\
-You will need " + str(requiredsoldier) + " Soldiers.\n\
+    war = input(f"> Do you want to start a War?\n\
+You will fight the {opponent}. \n\
+You will need {requiredsoldier} Soldiers.\n\
 1) Yes\n\
 2) No\n\
 ---> ")
@@ -804,12 +789,12 @@ Unfortunately, you lost 1500 Glory points...")
             battle += 1
             victory += 1
             time.sleep(2)
-            variable_name2 = "\nCommander: The War is over! You have managed to bring peace and freedom among your people!\n\
-As you built enough buildings and supplied enough supplies for the whole Kingdom!\n\
+            variable_name2 = f"\nCommander: The War is over! You have managed to bring peace and freedom among your people!\n\
+As you built enough buildings and supplied enough supplies for the whole Kingdom,\n\
 It is finally the time to retire in your cas-...\n\
-" + str(title) + " " + str(lordname) + ": I know I won! And I don't want to retire! Now, all is mine! This is mine! You are mine!\n\
+{rank} {lordname}: I know I won! And I don't want to retire! Now, all is mine! This is mine! You are mine!\n\
 Kill those who say the opposite! Kill them all! Kill th-\n\
-Commander: *Stabbing " + str(title) + " " + str(lordname) + "* No... Now you won't cause any more damage to anyone...\n\
+Commander: *Stabbing {rank} {lordname}* No... Now you won't cause any more damage to anyone...\n\
 Now look me in the eyes... I am in charge... It's over..."
             for char in variable_name2:
                 time.sleep(0.1)
@@ -820,7 +805,7 @@ Now look me in the eyes... I am in charge... It's over..."
         else:
             print("You Lost and your soldiers were hanged as an example... \n\
 A fair treatment!\n\
-Because of them, you lost 10000 Glory points...")
+Because of them, you lost 5000 Glory points...")
             soldier = 0
             glory -= 5000
             battle += 1
@@ -832,8 +817,7 @@ Because of them, you lost 10000 Glory points...")
         menu()
 
 def stats():
-    global crop
-    global soldier
+    global crop, soldier
     print("\n     ___  _          _         \n\
 ### / __|| |_  __ _ | |_  ___ ###\n\
 ### \__ \|  _|/ _` ||  _|(_-< ###\n\
@@ -880,8 +864,7 @@ def stats():
     gotomenu()
 
 def foodcomsuption():
-    global food
-    global soldier
+    global food, soldier
     if food <= int(0) and crop > 0:
         soldier = (crop * foodprod) * 100
         food = 0
@@ -905,7 +888,7 @@ def gotomenu():
 1) Yes\n\
 2) No\n\
 ---> ")
-    if gotomenu == "yes":
+    if gotomenu == "1":
         clear()
         menu()
     else:
